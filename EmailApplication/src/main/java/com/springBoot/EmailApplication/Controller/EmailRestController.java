@@ -6,9 +6,9 @@ import com.springBoot.EmailApplication.Entity.GenericResponse;
 import com.springBoot.EmailApplication.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("email")
@@ -21,8 +21,23 @@ public class EmailRestController {
         this.emailService = emailService;
     }
 
-    @GetMapping("/records")
-    public ResponseEntity<GenericResponse> getSentRecords(@RequestParam String emailId){
-        return emailService.getEmail(emailId);
+    @GetMapping("/record")
+    public ResponseEntity<GenericResponse> findEmailByEmailId(@RequestParam String emailId){
+        return emailService.getEmailByEmailId(emailId);
+    }
+
+    @GetMapping("/record/all")
+    public ResponseEntity<List<Email>> getAllEmails(){
+        return emailService.getAllEmails();
+    }
+
+    @PostMapping("")
+    public ResponseEntity<GenericResponse> addEmail(@RequestBody Email email){
+        return emailService.addEmail(email);
+    }
+
+    @DeleteMapping("/record")
+    public ResponseEntity<GenericResponse> removeEmail(@RequestParam Integer Id){
+        return emailService.removeEmail(Id);
     }
 }

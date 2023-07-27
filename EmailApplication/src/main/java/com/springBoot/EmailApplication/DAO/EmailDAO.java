@@ -6,6 +6,8 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class EmailDAO {
 
@@ -16,9 +18,26 @@ public class EmailDAO {
         this.entityManager = entityManager;
     }
 
-    public Email getEmailbyEmailId(String emailId) {
+    public Email findEmailById(Integer id){
+        return entityManager.find(Email.class, id);
+    }
+
+    public Email findEmailbyEmailId(String emailId) {
         TypedQuery<Email> findEmailQuery = entityManager.createQuery(" FROM Email WHERE emailId=:emailIdVariable", Email.class);
         findEmailQuery.setParameter("emailIdVariable", emailId);
         return findEmailQuery.getSingleResult();
+    }
+
+    public Email saveEmail(Email email) {
+        return entityManager.merge(email);
+    }
+
+    public void deleteEmail(Email email){
+        entityManager.remove(email);
+    }
+
+    public List<Email> getAllEmails() {
+        TypedQuery<Email> findEmailQuery = entityManager.createQuery("FROM Email", Email.class);
+        return findEmailQuery.getResultList();
     }
 }
