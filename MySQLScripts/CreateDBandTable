@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS `user_email_details`;
+USE `user_email_details`;
+
+DROP TABLE IF EXISTS `email_bank`;
+
+CREATE TABLE `email_bank` (
+	`id` int NOT NULL AUTO_INCREMENT,
+    `email` varchar(60) default null,
+    `name` varchar(45) default null,
+    `submit_time` varchar(45) Default NULL,
+    `status` varchar(5) Default NULL,
+    primary key (`id`)
+) ENGINE=InnoDB auto_increment=1 DEFAULT CHARSET=latin1;
