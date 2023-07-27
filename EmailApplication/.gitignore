@@ -32,5 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-
-EmailApplication/src/main/resources/application.properties
+*.properties
