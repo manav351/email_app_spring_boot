@@ -3,6 +3,7 @@ package com.springBoot.EmailApplication.Controller;
 
 import com.springBoot.EmailApplication.Entity.Email;
 import com.springBoot.EmailApplication.Entity.GenericResponse;
+import com.springBoot.EmailApplication.Entity.GenericResponseWithList;
 import com.springBoot.EmailApplication.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +23,19 @@ public class EmailRestController {
     }
 
     @GetMapping("/record")
-    public ResponseEntity<GenericResponse> findEmailByEmailId(@RequestParam String emailId){
-        return emailService.getEmailByEmailId(emailId);
+    public ResponseEntity<GenericResponseWithList> findEmailByEmailId(@RequestParam(required = false) String emailId, @RequestParam(required = false) Integer id){
+        if (id != null)
+            return emailService.getEmailById(id);
+        else if(emailId != null)
+            return emailService.getEmailByEmailId(emailId);
+        else
+            emailService.getAllEmails();
+        return null;
     }
 
+
     @GetMapping("/record/all")
-    public ResponseEntity<List<Email>> getAllEmails(){
+    public ResponseEntity<GenericResponseWithList> getAllEmails(){
         return emailService.getAllEmails();
     }
 

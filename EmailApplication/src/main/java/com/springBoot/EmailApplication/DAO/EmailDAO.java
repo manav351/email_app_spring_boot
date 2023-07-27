@@ -22,10 +22,10 @@ public class EmailDAO {
         return entityManager.find(Email.class, id);
     }
 
-    public Email findEmailbyEmailId(String emailId) {
+    public List<Email> findEmailbyEmailId(String emailId) {
         TypedQuery<Email> findEmailQuery = entityManager.createQuery(" FROM Email WHERE emailId=:emailIdVariable", Email.class);
         findEmailQuery.setParameter("emailIdVariable", emailId);
-        return findEmailQuery.getSingleResult();
+        return findEmailQuery.getResultList();
     }
 
     public Email saveEmail(Email email) {
