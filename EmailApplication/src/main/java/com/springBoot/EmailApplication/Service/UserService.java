@@ -6,6 +6,7 @@ import com.springBoot.EmailApplication.Entity.GenericResponse;
 import com.springBoot.EmailApplication.Entity.GenericResponseWithList;
 import com.springBoot.EmailApplication.Entity.Status;
 import com.springBoot.EmailApplication.ExceptionHandler.UserAlreadyDeleted;
+import com.springBoot.EmailApplication.ExceptionHandler.UserAlreadyRegistered;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -26,11 +30,12 @@ public class UserService {
     }
 
     public ResponseEntity<GenericResponseWithList> getUserByEmailId(String emailId) {
-        List<User> user = userDao.findUserbyEmailId(emailId);
+        User user = userDao.findUserbyEmailId(emailId);
 
         return new ResponseEntity<>(
                 new GenericResponseWithList(
-                        new Status(true, "Operation Successful : Search By Id", ""), user
+                        new Status(true, "Operation Successful : Search By Id", ""),
+                        Collections.singletonList(user)
                 ),
                 HttpStatus.OK
         );
@@ -38,6 +43,13 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<GenericResponse> addUser(User userFromAPI) {
+
+        User userFromDB = userDao.findUserbyEmailId(userFromAPI.getEmailId());
+
+        if(userFromDB != null)
+            throw new UserAlreadyRegistered("");
+
+
         userFromAPI.setSentStatus(false);
         userFromAPI.setRegisterTime(LocalDateTime.now().toString());
         userFromAPI.setId(0);

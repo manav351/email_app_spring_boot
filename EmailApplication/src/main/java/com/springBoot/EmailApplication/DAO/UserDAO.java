@@ -22,10 +22,10 @@ public class UserDAO {
         return entityManager.find(User.class, id);
     }
 
-    public List<User> findUserbyEmailId(String emailId) {
+    public User findUserbyEmailId(String emailId) {
         TypedQuery<User> findUserQuery = entityManager.createQuery(" FROM User WHERE emailId=:emailIdVariable", User.class);
         findUserQuery.setParameter("emailIdVariable", emailId);
-        return findUserQuery.getResultList();
+        return findUserQuery.getSingleResult();
     }
 
     public User saveUser(User user) {
