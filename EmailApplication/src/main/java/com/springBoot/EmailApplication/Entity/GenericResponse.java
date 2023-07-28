@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GenericResponse {
     Status status;
-    Email data;
+    User data;
 }

@@ -6,24 +6,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "email_bank")
+@Table(name = "user_collection")
 @Data @AllArgsConstructor @NoArgsConstructor
-public class Email {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "first_name")
+    private String firstName;
 
-    @Column(name = "email")
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "email_id")
     private String emailId;
 
-    @Column(name = "submit_time")
-    private String submitTime;
+    @Column(name = "register_time")
+    private String registerTime;
 
     @Column(name = "status")
     private Boolean sentStatus;
+
+    @Column(name = "trigger_time")
+    private String triggerTime;
 }

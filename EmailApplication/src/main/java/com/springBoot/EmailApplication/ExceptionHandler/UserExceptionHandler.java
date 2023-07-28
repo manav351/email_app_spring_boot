@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class EmailExceptionHandler {
+public class UserExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<GenericResponse> handleException(EmailAlreadyDeleted exc){
+    public ResponseEntity<GenericResponse> handleException(UserAlreadyDeleted exc){
         return new ResponseEntity<>(
                 new GenericResponse(
                         new Status(false, "Operation Failed", "User details are already deleted with id : " + exc),null

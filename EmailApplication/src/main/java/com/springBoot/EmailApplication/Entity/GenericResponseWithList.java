@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 public class GenericResponseWithList {
     Status status;
-    List<Email> data;
+    List<User> data;
 }
