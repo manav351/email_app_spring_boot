@@ -19,4 +19,14 @@ public class UserExceptionHandler {
                 HttpStatus.BAD_REQUEST
         );
     }
+
+    @ExceptionHandler
+    public ResponseEntity<GenericResponse> handleException(UserNotFound exc){
+        return new ResponseEntity<>(
+                new GenericResponse(
+                        new Status(false, "Operation Failed", "No User Found"),null
+                ),
+                HttpStatus.NOT_FOUND
+        );
+    }
 }
