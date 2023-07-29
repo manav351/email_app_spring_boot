@@ -10,4 +10,10 @@ import lombok.NoArgsConstructor;
 public class GenericResponse {
     Status status;
     User data;
+
+    public GenericResponse(Boolean status, String message, String error, User user){
+        Status newStatus = new Status(status, message, error);
+        this.status = newStatus;
+        this.data = user;
+    }
 }

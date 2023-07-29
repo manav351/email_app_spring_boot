@@ -36,9 +36,7 @@ public class EmailService {
         User userObj = userDAO.findUserById(id);
         userDAO.saveUser(sendEmailViaObject(userObj));
         return new ResponseEntity<>(
-                new GenericResponse(
-                        new Status(true, "Operation Successful",""), userObj
-                ),
+                new GenericResponse(true, "Operation Successful","",userObj),
                 HttpStatus.OK
         );
     }
@@ -48,9 +46,7 @@ public class EmailService {
         User userObj = userDAO.findUserbyEmailId(emailId);
         userDAO.saveUser(sendEmailViaObject(userObj));
         return new ResponseEntity<>(
-                new GenericResponse(
-                        new Status(true, "Operation Successful",""), userObj
-                ),
+                new GenericResponse(true, "Operation Successful","",userObj),
                 HttpStatus.OK
         );
     }
@@ -65,7 +61,7 @@ public class EmailService {
         sendEmail(
                 user.getEmailId(),
                 "Hi " + user.getFirstName() + "!",
-                "Thank you for registering" + user.getFirstName()
+                "Thank you for registering " + user.getFirstName() + " " +  user.getLastName()
         );
 
         user.setTriggerTime(LocalDateTime.now().toString());
@@ -93,9 +89,7 @@ public class EmailService {
         }
 
         return new ResponseEntity<>(
-                new GenericResponseWithList(
-                        new Status(true, "Operation Successful", ""), allUsers
-                ),
+                new GenericResponseWithList(true, "Operation Successful", "", allUsers),
                 HttpStatus.OK
         );
     }
@@ -109,9 +103,7 @@ public class EmailService {
         user = resetUserByObj(user);
 
         return new ResponseEntity<>(
-                new GenericResponse(
-                        new Status(true, "Operation Successful",""), user
-                ),
+                new GenericResponse(true, "Operation Successful","", user),
                 HttpStatus.OK
         );
     }
@@ -135,21 +127,16 @@ public class EmailService {
             userDAO.saveUser(sendEmailViaObject(userFromDB));
         else
             return new ResponseEntity<>(
-                    new GenericResponse(
-                            new Status(false, "Operation Failed", "Email Id and User Id doesn't match"),
-                            null
-                    ), HttpStatus.BAD_REQUEST
+                    new GenericResponse(false, "Operation Failed", "Email Id and User Id doesn't match", null),
+                    HttpStatus.BAD_REQUEST
             );
 
         return new ResponseEntity<>(
-                new GenericResponse(
-                        new Status(true, "Operation Successful",""), userFromDB
-                ),
+                new GenericResponse(true, "Operation Successful","",userFromDB),
                 HttpStatus.OK
         );
     }
 }
 
-// TODO: Convert Multiple Email to unique Emails
 // TODO: Separate trigger tables as there can be multiple hit for single table
 // TODO: Add Email Validator

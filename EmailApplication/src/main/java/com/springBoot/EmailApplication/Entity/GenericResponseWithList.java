@@ -12,4 +12,10 @@ import java.util.List;
 public class GenericResponseWithList {
     Status status;
     List<User> data;
+
+    public GenericResponseWithList(Boolean status, String message, String error, List<User> userList){
+        Status newStatus = new Status(status, message, error);
+        this.status = newStatus;
+        this.data = userList;
+    }
 }

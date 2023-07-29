@@ -45,10 +45,7 @@ public class UserService {
             throw new UserNotFound();
 
         return new ResponseEntity<>(
-                new GenericResponseWithList(
-                        new Status(true, "Operation Successful : Search By Id", ""),
-                        Collections.singletonList(userFromDB)
-                ),
+                new GenericResponseWithList(true, "Operation Successful : Search By Id", "",Collections.singletonList(userFromDB)),
                 HttpStatus.OK
         );
     }
@@ -61,10 +58,7 @@ public class UserService {
         emailService.sendEmailViaId(newUser.getId());
 
         return new ResponseEntity<>(
-                new GenericResponse(
-                        new Status(true, "User Details stored successfully", ""),
-                        newUser
-                )
+                new GenericResponse(true, "User Details stored successfully", "",newUser)
                 ,HttpStatus.CREATED
         );
     }
@@ -106,20 +100,16 @@ public class UserService {
 
         userDao.deleteUser(userObj);
 
-        GenericResponse response = new GenericResponse(
-                new Status(true, "User Details Successfully Deleted", ""),
-                userObj
+        return new ResponseEntity<>(
+                new GenericResponse(true, "User Details Successfully Deleted", "", userObj),
+                HttpStatus.OK
         );
-
-        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<GenericResponseWithList> getAllUsers() {
         List<User> allUsers = userDao.getAllUsers();
         return new ResponseEntity<>(
-                new GenericResponseWithList(
-                        new Status(true, "Operation Successful : All Users", ""), allUsers
-                ),
+                new GenericResponseWithList(true, "Operation Successful : All Users", "",allUsers),
                 HttpStatus.OK
         );
     }
@@ -134,10 +124,7 @@ public class UserService {
             throw new UserAlreadyDeleted(id.toString());
 
         return new ResponseEntity<>(
-                new GenericResponseWithList(
-                        new Status(true, "Operation Successful", ""),
-                        List.of(userObj)
-                ),
+                new GenericResponseWithList(true, "Operation Successful", "",List.of(userObj)),
                 HttpStatus.OK
         );
     }
