@@ -7,8 +7,11 @@ import com.springBoot.EmailApplication.Entity.GenericResponseWithList;
 import com.springBoot.EmailApplication.Entity.Status;
 import com.springBoot.EmailApplication.ExceptionHandler.UserAlreadyDeleted;
 import com.springBoot.EmailApplication.ExceptionHandler.UserAlreadyRegistered;
+import com.springBoot.EmailApplication.ExceptionHandler.UserIdCannotBeNegative;
+import com.springBoot.EmailApplication.ExceptionHandler.UserNotFound;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,12 +33,21 @@ public class UserService {
     }
 
     public ResponseEntity<GenericResponseWithList> getUserByEmailId(String emailId) {
-        User user = userDao.findUserbyEmailId(emailId);
+        User userFromDB;
+
+        try{
+            userFromDB = userDao.findUserbyEmailId(emailId);
+        }catch(EmptyResultDataAccessException e){
+            userFromDB = null;
+        }
+
+        if(userFromDB == null)
+            throw new UserNotFound();
 
         return new ResponseEntity<>(
                 new GenericResponseWithList(
                         new Status(true, "Operation Successful : Search By Id", ""),
-                        Collections.singletonList(user)
+                        Collections.singletonList(userFromDB)
                 ),
                 HttpStatus.OK
         );
@@ -43,12 +55,16 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<GenericResponse> addUser(User userFromAPI) {
+        User userFromDB;
 
-        User userFromDB = userDao.findUserbyEmailId(userFromAPI.getEmailId());
+        try{
+            userFromDB = userDao.findUserbyEmailId(userFromAPI.getEmailId());
+        }catch (EmptyResultDataAccessException e){
+            userFromDB = null;
+        }
 
         if(userFromDB != null)
             throw new UserAlreadyRegistered("");
-
 
         userFromAPI.setSentStatus(false);
         userFromAPI.setRegisterTime(LocalDateTime.now().toString());
@@ -93,6 +109,9 @@ public class UserService {
     }
 
     public ResponseEntity<GenericResponseWithList> getUserById(Integer id) {
+        if(id < 0)
+            throw new UserIdCannotBeNegative();
+
         User userObj = userDao.findUserById(id);
 
         if(userObj == null)

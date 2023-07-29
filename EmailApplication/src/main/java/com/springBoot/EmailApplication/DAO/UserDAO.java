@@ -4,6 +4,7 @@ import com.springBoot.EmailApplication.Entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,9 +24,11 @@ public class UserDAO {
     }
 
     public User findUserbyEmailId(String emailId) {
+        User userFromDB;
         TypedQuery<User> findUserQuery = entityManager.createQuery(" FROM User WHERE emailId=:emailIdVariable", User.class);
         findUserQuery.setParameter("emailIdVariable", emailId);
-        return findUserQuery.getSingleResult();
+        userFromDB = findUserQuery.getSingleResult();
+        return userFromDB;
     }
 
     public User saveUser(User user) {

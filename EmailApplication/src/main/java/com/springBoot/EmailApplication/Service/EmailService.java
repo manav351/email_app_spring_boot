@@ -5,6 +5,7 @@ import com.springBoot.EmailApplication.Entity.GenericResponse;
 import com.springBoot.EmailApplication.Entity.GenericResponseWithList;
 import com.springBoot.EmailApplication.Entity.Status;
 import com.springBoot.EmailApplication.Entity.User;
+import com.springBoot.EmailApplication.ExceptionHandler.MailAlreadySent;
 import com.springBoot.EmailApplication.ExceptionHandler.UserNotFound;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,24 +34,7 @@ public class EmailService {
     @Transactional
     public ResponseEntity<GenericResponse> sendEmailViaId(Integer id) {
         User userObj = userDAO.findUserById(id);
-        if(userObj == null)
-            throw new UserNotFound("");
-
-        if(userObj.getSentStatus())
-            return new ResponseEntity<>(
-                    new GenericResponse(
-                            new Status(false, "Operation Failled","Mail already Sent to User"), null
-                    ),
-                    HttpStatus.OK
-            );
-
-        userObj.setTriggerTime(LocalDateTime.now().toString());
-
-        sendEmail(userObj.getEmailId(), "Test Email", "Thank you for registering " + userObj.getFirstName());
-
-        userObj.setSentStatus(true);
-        userDAO.saveUser(userObj);
-
+        userDAO.saveUser(sendEmailViaObject(userObj));
         return new ResponseEntity<>(
                 new GenericResponse(
                         new Status(true, "Operation Successful",""), userObj
@@ -59,26 +43,36 @@ public class EmailService {
         );
     }
 
-//    public ResponseEntity<GenericResponse> sendEmailViaEmailId(String emailId) {
-//        User userObj = userDAO.findUserbyEmailId(emailId);
-//        if(userObj.getSentStatus())
-//            return new ResponseEntity<>(
-//                    new GenericResponse(
-//                            new Status(false, "Operation Failled","Mail already Sent to User"), null
-//                    ),
-//                    HttpStatus.OK
-//            );
-//
-//        userObj.setSentStatus(true);
-//        userDAO.saveUser(userObj);
-//
-//        return new ResponseEntity<>(
-//                new GenericResponse(
-//                        new Status(true, "Operation Successful",""), userObj
-//                ),
-//                HttpStatus.OK
-//        );
-//    }
+    @Transactional
+    public ResponseEntity<GenericResponse> sendEmailViaEmailId(String emailId) {
+        User userObj = userDAO.findUserbyEmailId(emailId);
+        userDAO.saveUser(sendEmailViaObject(userObj));
+        return new ResponseEntity<>(
+                new GenericResponse(
+                        new Status(true, "Operation Successful",""), userObj
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    private User sendEmailViaObject(User user){
+        if(user == null)
+            throw new UserNotFound("");
+
+        if(user.getSentStatus())
+            throw new MailAlreadySent("");
+
+        sendEmail(
+                user.getEmailId(),
+                "Hi " + user.getFirstName() + "!",
+                "Thank you for registering" + user.getFirstName()
+        );
+
+        user.setTriggerTime(LocalDateTime.now().toString());
+        user.setSentStatus(true);
+
+        return user;
+    }
 
 
     private User resetUserByObj(User user){
@@ -132,6 +126,27 @@ public class EmailService {
         mailMessage.setFrom("manav121999@gmail.com");
 
         javaMailSender.send(mailMessage);
+    }
+
+    public ResponseEntity<GenericResponse> sendEmailViaBoth(Integer id, String emailId) {
+        User userFromDB = userDAO.findUserById(id);
+
+        if (userFromDB.getEmailId().equals(emailId))
+            userDAO.saveUser(sendEmailViaObject(userFromDB));
+        else
+            return new ResponseEntity<>(
+                    new GenericResponse(
+                            new Status(false, "Operation Failed", "Email Id and User Id doesn't match"),
+                            null
+                    ), HttpStatus.BAD_REQUEST
+            );
+
+        return new ResponseEntity<>(
+                new GenericResponse(
+                        new Status(true, "Operation Successful",""), userFromDB
+                ),
+                HttpStatus.OK
+        );
     }
 }
 

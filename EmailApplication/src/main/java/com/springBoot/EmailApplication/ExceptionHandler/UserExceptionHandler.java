@@ -2,6 +2,7 @@ package com.springBoot.EmailApplication.ExceptionHandler;
 
 import com.springBoot.EmailApplication.Entity.GenericResponse;
 import com.springBoot.EmailApplication.Entity.Status;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,6 +33,36 @@ public class UserExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<GenericResponse> handleException(UserNotFound exc){
+        return new ResponseEntity<>(
+                new GenericResponse(
+                        new Status(false, "Operation Failed", "No User Found"),null
+                ),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<GenericResponse> handleException(MailAlreadySent exc){
+        return new ResponseEntity<>(
+                new GenericResponse(
+                        new Status(false, "Operation Failled","Mail already Sent to User"), null
+                ),
+                HttpStatus.OK
+        );
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<GenericResponse> handleException(UserIdCannotBeNegative exc){
+        return new ResponseEntity<>(
+                new GenericResponse(
+                        new Status(false, "Operation Failed", "User Id cannot be negative"),null
+                ),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<GenericResponse> handleException(EmptyResultDataAccessException exc){
         return new ResponseEntity<>(
                 new GenericResponse(
                         new Status(false, "Operation Failed", "No User Found"),null

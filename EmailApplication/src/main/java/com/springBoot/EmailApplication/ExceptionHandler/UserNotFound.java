@@ -1,6 +1,9 @@
 package com.springBoot.EmailApplication.ExceptionHandler;
 
 public class UserNotFound extends RuntimeException{
+    public UserNotFound() {
+    }
+
     public UserNotFound(String message) {
         super(message);
     }
