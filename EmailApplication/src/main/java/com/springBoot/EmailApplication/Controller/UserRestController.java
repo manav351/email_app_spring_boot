@@ -42,7 +42,7 @@ public class UserRestController {
 
     @PostMapping("/record")
     public ResponseEntity<GenericResponse> addUserDetails(@RequestBody User userDetails){
-        return userService.addUser(userDetails);
+        return userService.addUserAndSendWelcomeMail(userDetails);
     }
 
     @DeleteMapping("/record")

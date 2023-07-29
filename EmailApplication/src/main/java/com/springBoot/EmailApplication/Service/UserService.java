@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,10 +24,12 @@ import java.util.List;
 public class UserService {
 
     private UserDAO userDao;
+    private EmailService emailService;
 
     @Autowired
-    public UserService(UserDAO userDao) {
+    public UserService(UserDAO userDao, EmailService emailService) {
         this.userDao = userDao;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<GenericResponseWithList> getUserByEmailId(String emailId) {
@@ -54,7 +54,22 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<GenericResponse> addUser(User userFromAPI) {
+    public ResponseEntity<GenericResponse> addUserAndSendWelcomeMail(User userFromAPI) {
+        User newUser = addUserToDB(userFromAPI);
+
+        // Sending the mail to new user
+        emailService.sendEmailViaId(newUser.getId());
+
+        return new ResponseEntity<>(
+                new GenericResponse(
+                        new Status(true, "User Details stored successfully", ""),
+                        newUser
+                )
+                ,HttpStatus.CREATED
+        );
+    }
+
+    private User addUserToDB(User userFromAPI){
         User userFromDB;
 
         try{
@@ -66,19 +81,20 @@ public class UserService {
         if(userFromDB != null)
             throw new UserAlreadyRegistered("");
 
-        userFromAPI.setSentStatus(false);
-        userFromAPI.setRegisterTime(LocalDateTime.now().toString());
-        userFromAPI.setId(0);
-        userFromAPI.setTriggerTime("00:00:00");
-
-        userFromAPI = userDao.saveUser(userFromAPI);
-
-        GenericResponse response = new GenericResponse(
-                new Status(true, "User Details stored successfully", ""),
-                userFromAPI
+        User newUser = new User(
+                0,
+                userFromAPI.getFirstName(),
+                userFromAPI.getLastName(),
+                userFromAPI.getEmailId(),
+                LocalDateTime.now().toString(),
+                false,
+                "00-00-00T00:00:00"
         );
 
-        return new ResponseEntity<>(response,HttpStatus.CREATED);
+        // Add user to DB
+        newUser = userDao.saveUser(newUser);
+
+        return newUser;
     }
 
     @Transactional
