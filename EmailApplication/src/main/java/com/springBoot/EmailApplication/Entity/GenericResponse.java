@@ -16,4 +16,10 @@ public class GenericResponse {
         this.status = newStatus;
         this.data = user;
     }
+
+    public void updateFields(Boolean status, String message, String error, User user){
+        Status newStatus = new Status(status, message, error);
+        this.setStatus(newStatus);
+        this.setData(user);
+    }
 }

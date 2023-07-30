@@ -32,11 +32,6 @@ public class EmailControlller {
             return emailService.sendEmailViaBoth(id, email_id);
     }
 
-//    @PostMapping("/{id}")
-//    public ResponseEntity<GenericResponse> sendEmail(@PathVariable Integer id){
-//        return emailService.sendEmailViaId(id);
-//    }
-
     @PostMapping("/reset/all")
     public ResponseEntity<GenericResponseWithList> resetAllEmails(){
         return emailService.resetAllUsers();

@@ -53,14 +53,17 @@ public class UserService {
     @Transactional
     public ResponseEntity<GenericResponse> addUserAndSendWelcomeMail(User userFromAPI) {
         User newUser = addUserToDB(userFromAPI);
+        GenericResponse response = new GenericResponse();
 
         // Sending the mail to new user
-        emailService.sendEmailViaId(newUser.getId());
+        try{
+            emailService.sendEmailViaId(newUser.getId());
+            response.updateFields(true, "Operation Successful! User details stored + mail sent successfull", "", newUser);
+        }catch(Exception e){
+            response.updateFields(false,"Operation Failed", "User Details stored but mail not sent", newUser);
+        }
 
-        return new ResponseEntity<>(
-                new GenericResponse(true, "User Details stored successfully", "",newUser)
-                ,HttpStatus.CREATED
-        );
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     private User addUserToDB(User userFromAPI){
@@ -108,6 +111,7 @@ public class UserService {
 
     public ResponseEntity<GenericResponseWithList> getAllUsers() {
         List<User> allUsers = userDao.getAllUsers();
+
         return new ResponseEntity<>(
                 new GenericResponseWithList(true, "Operation Successful : All Users", "",allUsers),
                 HttpStatus.OK
